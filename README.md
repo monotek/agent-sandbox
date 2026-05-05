@@ -93,40 +93,9 @@ See [Configuration](#configuration) to pin a specific image, change paths, or pa
 
 ## Usage
 
-### Wrapper scripts (recommended)
+### Wrapper scripts
 
-`agent-wrapper.sh` is a single script installed under multiple names. When invoked, it:
-
-1. Mounts the current working directory as `/home/agent/workdir` inside the container
-2. Sets the container working directory to `/home/agent/workdir`
-3. Creates (if absent) and mounts all agent config directories from `AGENT_SANDBOX_DIR` (`~/agent-sandbox/` by default)
-4. Mounts `~/.gitconfig` read-only — git identity inside the container
-5. Forwards the SSH agent socket for git-over-SSH
-6. Passes all CLI arguments unchanged to the container
-
-#### Installation
-
-> The Quick Start section above covers the common case. What follows is the full detail.
-
-**Symlink — don't copy.** The wrapper loads `.env` from the repo root by resolving its
-own real path. A copied script would look for `.env` in `~/.local/bin/` instead of the
-repo. With a symlink, `git pull` in the repo also picks up any future wrapper changes
-without reinstalling.
-
-```bash
-git clone https://github.com/monotek/agent-sandbox.git
-cd agent-sandbox
-ln -sf "$(pwd)/agent-wrapper.sh" ~/.local/bin/agent-wrapper
-```
-
-Then create one symlink per agent you want to intercept:
-
-```bash
-ln -sf agent-wrapper ~/.local/bin/opencode
-ln -sf agent-wrapper ~/.local/bin/claude
-ln -sf agent-wrapper ~/.local/bin/gemini
-ln -sf agent-wrapper ~/.local/bin/copilot
-```
+`agent-wrapper.sh` is a single script installed under multiple names — see [Quick Start](#quick-start) for the install commands. **Symlink, don't copy**: the wrapper resolves `.env` and future updates via its own real path; a copied script loses both.
 
 **If you use mise locally to manage the agents**, `mise activate` injects each
 tool's bin directory into `$PATH` via shell hooks that fire on every prompt,
@@ -154,19 +123,6 @@ calls the wrapper regardless of whether mise has also injected a local
 `opencode` binary earlier in `$PATH`. The locally installed binaries remain
 available for non-interactive use (scripts, CI) and mise continues to manage
 their versions.
-
-#### How it works
-
-The wrapper mounts the current working directory to a fixed path inside the container:
-
-```
-$PWD  →  /home/agent/workdir  (container working directory)
-```
-
-In addition, the wrapper mounts when present:
-
-- `~/.gitconfig` → `/home/agent/.gitconfig` (read-only) — git identity, when the file exists
-- SSH agent socket → `/run/ssh-agent.sock` — when `$SSH_AUTH_SOCK` is set to a valid socket
 
 #### Configuration
 

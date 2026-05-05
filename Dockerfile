@@ -13,6 +13,7 @@ RUN apt-get update && \
         gnupg \
         libffi-dev \
         libssl-dev \
+        mc \
         openssh-client \
         unzip \
         zlib1g-dev \
