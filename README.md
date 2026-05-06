@@ -75,7 +75,17 @@ runtime — nothing sensitive is baked into the image.
 
    Skip any agents you don't use. Re-run after updating the originals.
 
-4. **Run:**
+4. **If you manage agents with mise** — add this to your `~/.zshrc` or `~/.bashrc`, after `eval "$(mise activate ...)"`:
+   
+   ```bash
+   eval "$(~/gitrepos/agent-sandbox/activate.sh)"
+   ```
+   
+   This defines shell functions that take priority over mise-injected `$PATH` entries so the
+   container wrapper is always called instead of the locally installed binary.
+   See [Wrapper scripts](#wrapper-scripts) for details.
+
+5. **Run:**
    ```bash
    cd ~/gitrepos/my-project
    opencode
