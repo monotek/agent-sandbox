@@ -39,8 +39,8 @@
 #   AGENT_SANDBOX_DIR        Host directory that holds all agent configs and
 #                            credentials (default: ~/agent-sandbox).
 #                            Agent config subdirs (.claude, .config/opencode,
-#                            .copilot, .gemini, .config/gh) are mounted
-#                            automatically when they exist inside this directory.
+#                            .local/share/opencode, .copilot, .gemini, .config/gh)
+#                            and .claude.json are mounted automatically.
 #   AGENT_SANDBOX_KUBE       Host path to mount as /home/agent/.kube (read-only).
 #                            Not set by default — no kubeconfig is mounted unless
 #                            explicitly provided here.
@@ -116,12 +116,17 @@ MOUNTS+=(-v "${WORKDIR_MOUNT}")
 mkdir -p \
   "${SANDBOX_DIR}/.claude" \
   "${SANDBOX_DIR}/.config/opencode" \
+  "${SANDBOX_DIR}/.local/share/opencode" \
   "${SANDBOX_DIR}/.copilot" \
   "${SANDBOX_DIR}/.gemini" \
   "${SANDBOX_DIR}/.config/gh"
 
+touch "${SANDBOX_DIR}/.claude.json"
+
 MOUNTS+=(-v "${SANDBOX_DIR}/.claude:/home/agent/.claude")
+MOUNTS+=(-v "${SANDBOX_DIR}/.claude.json:/home/agent/.claude.json")
 MOUNTS+=(-v "${SANDBOX_DIR}/.config/opencode:/home/agent/.config/opencode")
+MOUNTS+=(-v "${SANDBOX_DIR}/.local/share/opencode:/home/agent/.local/share/opencode")
 MOUNTS+=(-v "${SANDBOX_DIR}/.copilot:/home/agent/.copilot")
 MOUNTS+=(-v "${SANDBOX_DIR}/.gemini:/home/agent/.gemini")
 MOUNTS+=(-v "${SANDBOX_DIR}/.config/gh:/home/agent/.config/gh:ro")

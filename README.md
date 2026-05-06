@@ -64,11 +64,13 @@ runtime — nothing sensitive is baked into the image.
    container's filesystem would silently break inside the container:
 
    ```bash
-   cp -rL ~/.claude/.            ~/agent-sandbox/.claude/
-   cp -rL ~/.config/opencode/.   ~/agent-sandbox/.config/opencode/
-   cp -rL ~/.copilot/.           ~/agent-sandbox/.copilot/
-   cp -rL ~/.gemini/.            ~/agent-sandbox/.gemini/
-   cp -rL ~/.config/gh/.         ~/agent-sandbox/.config/gh/
+   cp -rL ~/.claude/.                  ~/agent-sandbox/.claude/
+   cp -rL ~/.config/opencode/.         ~/agent-sandbox/.config/opencode/
+   cp -rL ~/.local/share/opencode/.    ~/agent-sandbox/.local/share/opencode/
+   cp -rL ~/.copilot/.                 ~/agent-sandbox/.copilot/
+   cp -rL ~/.gemini/.                  ~/agent-sandbox/.gemini/
+   cp -rL ~/.config/gh/.               ~/agent-sandbox/.config/gh/
+   cp -L  ~/.claude.json               ~/agent-sandbox/.claude.json
    ```
 
    Skip any agents you don't use. Re-run after updating the originals.
@@ -190,7 +192,9 @@ podman run -it --rm \
   --userns=keep-id:uid=1001,gid=1001 \
   -v "$PWD:/home/agent/workdir" \
   -v ~/agent-sandbox/.claude:/home/agent/.claude \
+  -v ~/agent-sandbox/.claude.json:/home/agent/.claude.json \
   -v ~/agent-sandbox/.config/opencode:/home/agent/.config/opencode \
+  -v ~/agent-sandbox/.local/share/opencode:/home/agent/.local/share/opencode \
   -v ~/agent-sandbox/.copilot:/home/agent/.copilot \
   -v ~/agent-sandbox/.gemini:/home/agent/.gemini \
   -v ~/.gitconfig:/home/agent/.gitconfig:ro \
@@ -214,11 +218,13 @@ podman run -it --rm ghcr.io/monotek/agent-sandbox:main
 │
 └─ agent-sandbox/             # Everything the agent can see — configs and credentials
     ├─ .claude/               # Claude Code config     (auto-mounted, writable)
+    ├─ .claude.json           # Claude settings file   (auto-mounted, writable)
     ├─ .copilot/              # Copilot CLI config     (auto-mounted, writable)
     ├─ .gemini/               # Gemini CLI config      (auto-mounted, writable)
     ├─ .config/
     │   ├─ opencode/          # OpenCode config        (auto-mounted, writable)
     │   └─ gh/                # GitHub CLI config      (auto-mounted, read-only)
+    ├─ .local/share/opencode/ # OpenCode data          (auto-mounted, writable)
     └─ .kube/                 # Kubeconfig (restricted) — mounted only when AGENT_SANDBOX_KUBE is set
         └─ config
 ```
